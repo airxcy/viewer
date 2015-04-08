@@ -19,7 +19,19 @@ SOURCES += \
     src/Qts/viewqt.cpp \
     src/trackers/buffers.cpp \
     src/Qts/modelsqt.cpp \
-    src/trackers/utils.cpp
+    src/trackers/utils.cpp \
+    src/trackers/klt_c/convolve.cpp \
+    src/trackers/klt_c/error.cpp \
+    src/trackers/klt_c/klt.cpp \
+    src/trackers/klt_c/klt_util.cpp \
+    src/trackers/klt_c/pnmio.cpp \
+    src/trackers/klt_c/pyramid.cpp \
+    src/trackers/klt_c/selectGoodFeatures.cpp \
+    src/trackers/klt_c/storeFeatures.cpp \
+    src/trackers/klt_c/trackFeatures.cpp \
+    src/trackers/klt_c/trk.cpp \
+    src/trackers/klt_c/writeFeatures.cpp \
+    src/trackers/klttracker.cpp
 
 HEADERS  += \
     includes/Qts/mainwindow.h \
@@ -27,7 +39,19 @@ HEADERS  += \
     includes/Qts/viewqt.h \
     includes/trackers/buffers.h \
     includes/Qts/modelsqt.h \
-    includes/trackers/utils.h
+    includes/trackers/utils.h \
+    includes/trackers/klt_c/base.h \
+    includes/trackers/klt_c/convolve.h \
+    includes/trackers/klt_c/error.h \
+    includes/trackers/klt_c/klt.h \
+    includes/trackers/klt_c/klt_util.h \
+    includes/trackers/klt_c/pnmio.h \
+    includes/trackers/klt_c/pyramid.h \
+    includes/trackers/klt_c/stdafx.h \
+    includes/trackers/klt_c/targetver.h \
+    includes/trackers/klt_c/trk.h \
+    includes/trackers/tracker.h \
+    includes/trackers/klttracker.h
 
 FORMS    += mainwindow.ui
 

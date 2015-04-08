@@ -4,7 +4,7 @@
 #include <string.h>
 #include <stdlib.h>
 typedef unsigned char BYTE;
-typedef float REAL;
+typedef double REAL;
 typedef int PntT;
 template <typename ELEM_T> class Buff
 {
@@ -59,6 +59,11 @@ typedef struct {
     PntT y;
 	int t;
 } TrkPts, *TrkPts_p;
+typedef struct {
+    REAL x;
+    REAL y;
+    int t;
+}FeatPts,*FeatPts_p;
 
 typedef struct
 {
@@ -74,6 +79,14 @@ public:
     TrackBuff():Buff(){isCurved=false;}
     bool isCurved;
     void clone(TrackBuff* target);
+    void clear();
+};
+class FeatBuff : public Buff<FeatPts>
+{
+public:
+    FeatBuff():Buff(){isCurved=false;}
+    bool isCurved;
+    void clone(FeatBuff* target);
     void clear();
 };
 class BBoxBuff : public Buff<BB>

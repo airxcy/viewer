@@ -68,7 +68,7 @@ void TrkScene::drawBackground(QPainter * painter, const QRectF & rect)
 
     if(roivec.size()>0)
     {
-        painter->setPen(Qt::blue);
+        painter->setPen(Qt::yellow);
         DragDots* dot = roivec[0];
         int prex=dot->coord[0],prey=dot->coord[1];
         for(int i=0;i<roivec.size();i++)
@@ -85,6 +85,35 @@ void TrkScene::drawBackground(QPainter * painter, const QRectF & rect)
             painter->drawLine(prex,prey,x,y);
         }
     }
+
+    if(streamThd->kltInited)
+    {
+
+        std::vector<FeatBuff>& klttrkvec=streamThd->tracker->trackBuff;
+
+        for(int i=0;i<klttrkvec.size();i++)
+        {
+
+            FeatBuff& klttrk= klttrkvec[i];
+            unsigned char r=feat_colos[i%6][0],g=feat_colos[i%6][1],b=feat_colos[i%6][2];
+            if(klttrk.len>5)
+            {
+                double x0,y0,x1,y1;
+                for(int j=klttrk.len-2;j<klttrk.len;j++)
+                {
+                     x1=klttrk.getPtr(j)->x,y1=klttrk.getPtr(j)->y;
+                     x0=klttrk.getPtr(j-1)->x,y0=klttrk.getPtr(j-1)->y;
+                    int indcator =(j+30)>255;
+                    int alpha = indcator*255+(1-indcator)*(j+30);
+                    painter->setPen(QColor(r,g,b));//,alpha));
+                    painter->drawLine(x0,y0,x1,y1);
+
+                }
+                painter->drawText(x1,y1,QString::number(klttrk.len));
+            }
+        }
+    }
+
     /*
     if(lineDone>=2)
     {
@@ -95,35 +124,47 @@ void TrkScene::drawBackground(QPainter * painter, const QRectF & rect)
 
     if(streamThd->lineDone)
     {
-        painter->setPen(Qt::red);
+        painter->setPen(Qt::blue);
         //painter->drawLine(streamThd->pointA[0],streamThd->pointA[1],streamThd->pointB[0],streamThd->pointB[1]);
         for(int i=0;i<streamThd->y_idx.size();i++)
         {
             painter->drawPoint(streamThd->x_idx[i],streamThd->y_idx[i]);
         }
+        painter->setPen(Qt::NoPen);
+        painter->setBrush(QBrush(QColor(255,0,0,50),Qt::SolidPattern));
+        painter->drawConvexPolygon(posDir,3);
+        painter->setBrush(QBrush(QColor(0,255,0,50),Qt::SolidPattern));
+        painter->drawConvexPolygon(negDir,3);
+
     }
     views().at(0)->update();
     //update();
 
 }
-/*
-void TrkScene::drawItems(QPainter *painter, int numItems,QGraphicsItem *items[],const QStyleOptionGraphicsItem options[],QWidget *widget)
+void TrkScene::updateDirPts()
 {
+    if(streamThd!=NULL&&streamThd->lineDone)
+    {
+        double midx=(streamThd->pointA[0]+streamThd->pointB[0])/2,midy=(streamThd->pointA[1]+streamThd->pointB[1])/2;
+        double normx=streamThd->xn,normy=streamThd->yn;
+        double linex=streamThd->xline,liney=streamThd->yline;
+        int edgelen = streamThd->linelen/8;
 
-    QGraphicsScene::drawItems(painter,numItems,items,options,widget);
-    views().at(0)->update();
-    update();
+        posDir[0].setX(midx-linex*edgelen*4);
+        posDir[0].setY(midy-liney*edgelen*4);
+        posDir[1].setX(midx+linex*edgelen*4);
+        posDir[1].setY(midy+liney*edgelen*4);
+        posDir[2].setX(midx+normx*edgelen);
+        posDir[2].setY(midy+normy*edgelen);
 
+        negDir[0].setX(midx-linex*edgelen*4);
+        negDir[0].setY(midy-liney*edgelen*4);
+        negDir[1].setX(midx+linex*edgelen*4);
+        negDir[1].setY(midy+liney*edgelen*4);
+        negDir[2].setX(midx-normx*edgelen);
+        negDir[2].setY(midy-normy*edgelen);
+    }
 }
-*/
-/*
-void TrkScene::drawForeground(QPainter * painter, const QRectF & rect)
-{
-    update(sceneRect());
-    //views().at(0)->updateScene(sceneRect());
-
-}
-*/
 void TrkScene::updateFptr(unsigned char * fptr,int fidx)
 {
     bgBrush.setTextureImage(QImage(fptr,streamThd->framewidth,streamThd->frameheight,QImage::Format_RGB888));
@@ -229,7 +270,6 @@ void TrkScene::setUpbb()
 {
     if(!bbDone&&streamThd!=NULL&&streamThd->persDone)
     {
-        std::cout<<"setUPbb"<<std::endl;
         for(int i=0;i<bb_N;i++)
         {
             if(i<bbvec.size())
@@ -255,7 +295,6 @@ void TrkScene::setUpbb()
                 newbb->setVisible(false);
             }
         }
-        std::cout<<"in"<<std::endl;
         for(int i=0;i<dragbbvec.size();i++)
         {
             dragbbvec[i]->setVisible(false);
@@ -294,7 +333,6 @@ void TrkScene::dragBBclicked(int pid)
     {
         DragDots* dot = dotvec[pid];
         int x=dot->coord[0],y=dot->coord[1],range=2*dot->range;
-        std::cout<<"pid:"<<pid<<"|"<<x<<","<<y<<std::endl;
         DragBBox* newbb = new DragBBox(x-range,y-range,x+range,y+range);
         newbb->bbid=pid;
         newbb->setClr(dot->rgb[0],dot->rgb[1],dot->rgb[2]);
@@ -382,7 +420,6 @@ void RefScene::drawBackground(QPainter * painter, const QRectF & rect)
                 }
             }
         }
-
         int* gtptr=streamThd->sliceGT;
         int slicelen=streamThd->slicelen;
         for(int bb_i=0;bb_i<bb_N;bb_i++)
@@ -392,7 +429,6 @@ void RefScene::drawBackground(QPainter * painter, const QRectF & rect)
             painter->setPen(QColor(a1->rgb[0],a1->rgb[1],a1->rgb[2]));
             int x1=a1->coord[0],x2=a2->coord[0],y=a1->coord[1];
             if(x1>x2)std::swap(x1,x2);
-            //std::cout<<"drawline"<<std::endl;
             painter->drawLine(x1,0,x1,height());
             painter->drawLine(x2,0,x2,height());
 
@@ -444,7 +480,6 @@ void RefScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
         anchor2.push_back(aanchor);
         addItem(aanchor);
         bb_N++;
-        std::cout<<bb_N<<std::endl;
         pressed=true;
     }
     QGraphicsScene::mousePressEvent(event);
@@ -454,7 +489,8 @@ void RefScene::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     if ((event->buttons() & Qt::RightButton)&&pressed)
     {
         int x = event->scenePos().x(),y=event->scenePos().y();
-        anchor2[bb_N-1]->setX(x);
+        if(x>0&&x<width())
+            anchor2[bb_N-1]->setX(x);
     }
     QGraphicsScene::mouseMoveEvent(event);
 }
@@ -464,8 +500,93 @@ void RefScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     if(event->button()==Qt::RightButton&&pressed)
     {
         int x = event->scenePos().x(),y=event->scenePos().y();
-        anchor2[bb_N-1]->setX(x);
+        if(x>0&&x<width())
+            anchor2[bb_N-1]->setX(x);
         pressed=false;
     }
     QGraphicsScene::mouseReleaseEvent(event);
+}
+FeatScene::FeatScene(const QRectF & sceneRect, QObject * parent):QGraphicsScene(sceneRect, parent)
+{
+    streamThd=NULL;
+    trkscene=NULL;
+    frameidx=0;
+}
+FeatScene::FeatScene(qreal x, qreal y, qreal width, qreal height, QObject * parent):QGraphicsScene( x, y, width, height, parent)
+{
+    streamThd=NULL;
+    trkscene=NULL;
+    frameidx=0;
+}
+void FeatScene::updateFptr(unsigned char * fptr,int fidx)
+{
+    bgBrush.setTextureImage(QImage(fptr,streamThd->slicelen,streamThd->linelen,QImage::Format_RGB888));
+    frameidx=fidx;
+}
+
+void FeatScene::drawBackground(QPainter * painter, const QRectF & rect)
+{
+
+    if(streamThd!=NULL&&streamThd->lineDone)
+    {
+        updateFptr(streamThd->sliceptr, streamThd->frameidx);
+    }
+
+    bgBrush.setColor(Qt::black);
+    painter->setBrush(bgBrush);
+    painter->drawRect(rect);
+
+    painter->setBrush(QColor(0,0,0,100));
+    painter->drawRect(rect);
+    if(streamThd!=NULL&&streamThd->lineDone&&streamThd->kltInited)
+    {
+        for(int i=0;i<streamThd->linelen;i++)
+        {
+            for(int j=0;j<streamThd->slicelen;j++)
+            {
+                double x=streamThd->sliceKLT(i,j,0),y=streamThd->sliceKLT(i,j,1);
+                double kltlen=sqrt(x*x+y*y);
+                if(kltlen>=0.1)
+                {
+                    int xclr = x*50+128,yclr=y*50+128;
+                    xclr=(xclr>0)*xclr;
+                    xclr=(xclr>=255)*255+(xclr<255)*xclr;
+                    yclr=(yclr>0)*yclr;
+                    yclr=(yclr>=255)*255+(yclr<255)*yclr;
+                    //xclr=(xclr>255)
+                    painter->setPen(QColor(xclr,(255-xclr),yclr));
+                    painter->drawEllipse(j-1,i-1,3,3);
+                    painter->drawLine(j,i,j+x*5,i+y*5);
+                    //painter->drawPoint(j,i);
+                }
+            }
+        }
+        /*
+        painter->setPen(Qt::yellow);
+        for(int i=0;i<streamThd->prodvec.size();i++)
+        {
+            painter->drawLine(i*2,height()/2,i*2,height()/2+streamThd->prodvec[i]*1000);
+        }
+        */
+    }
+    views().at(0)->update();
+
+}
+void FeatScene::clear()
+{
+    bgBrush.setColor(Qt::black);
+    frameidx=0;
+}
+void FeatScene::init()
+{
+    if(streamThd!=NULL)
+    {
+
+        setSceneRect(0,0,streamThd->slicelen,streamThd->linelen);
+        //bgBrush.setColor(Qt::black);
+        updateFptr(streamThd->sliceptr, streamThd->frameidx);
+        txtfont.setPixelSize(10);
+        txtfont.setFamily("PreCursive");
+        txtfont.setBold(true);
+    }
 }

@@ -20,11 +20,12 @@ MainWindow::MainWindow()
     setCentralWidget(cWidget);
     updaderidx=0;
     streamThd = new StreamThread(this);
+    streamThd->mwindow=this;
     setStyleSheet("QWidget { background-color: rgb(105,210,231); }");
     cWidget->setStyleSheet("QWidget { background-color: rgb(105,210,231); }");
     setupLayout();
     makeConns();
-    refscene=NULL,trkscene=NULL;
+    refscene=NULL,trkscene=NULL,featscene=NULL;
     //setWindowFlags(Qt::FramelessWindowHint);
     setStyleSheet(" QPushButton:disabled {background: rgba(0,0,0,100)}");
     setFixedSize(cWidget->minimumSize());
@@ -72,15 +73,14 @@ void MainWindow::setupLayout()
     refview = new GraphicsView(new QGraphicsScene(0, 0, 440, 240),scrollwidget);
     refview->setFixedSize(defaultscene->width()+2,defaultscene->height()+2);
     refview->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-    /*
-    gtscene = new QGraphicsScene(0,0,440,442);
-    gtview = new GraphicsView(gtscene,scrollwidget);
-    gtview->setFixedSize(defaultscene->width()+2,defaultscene->height()+2);
-    gtview->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-    */
+
+    featview = new GraphicsView(new QGraphicsScene(0, 0, 440, 240),scrollwidget);
+    featview->setFixedSize(defaultscene->width()+2,defaultscene->height()+2);
+    featview->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+
     layout1->addWidget(gview,0,0,1,frameGridSize,Qt::AlignTop);
     layout1->addWidget(refview,0,frameGridSize,1,frameGridSize,Qt::AlignTop);
-    //layout1->addWidget(gtview,0,frameGridSize*2,1,frameGridSize,Qt::AlignTop);
+    layout1->addWidget(featview,0,frameGridSize*2,1,frameGridSize,Qt::AlignTop);
     layout1->setMargin(0);
     layout1->setSpacing(0);
 
@@ -175,7 +175,7 @@ void MainWindow::initUI()
         trkscene = new TrkScene(0, 0, fw, fh);
         trkscene->streamThd=streamThd;
         streamThd->trkscene=trkscene;
-        double scalefactor = 2.0/3.0;
+        double scalefactor = 1;//2.0/3.0;
         gview->scale(scalefactor,scalefactor);
         gview->setFixedSize(fw*scalefactor+3,fh*scalefactor+3);
         gview->setScene(trkscene);
@@ -220,7 +220,10 @@ void MainWindow::initUI()
 }
 void MainWindow::setUpSlice()
 {
+
+    std::cout<<streamThd->slicelen<<","<<streamThd->linelen<<std::endl;
     int slicelen = streamThd->slicelen,linelen = streamThd->linelen;
+
     if(refscene==NULL)
     {
         refscene = new RefScene(0,0,slicelen,linelen);
@@ -229,13 +232,20 @@ void MainWindow::setUpSlice()
         refview->setScene(refscene);
 
     }
+
+    if(featscene==NULL)
+    {
+        featscene = new FeatScene(0,0,slicelen,linelen);
+        featscene->streamThd=streamThd;
+        featview->setScene(featscene);
+
+    }
+
     refscene->init();
+    featscene->init();
     refview->setFixedSize(refscene->width()+2,refscene->height()+2);
-    /*
-    gtscene->setSceneRect(0,0,streamThd->slicelen,streamThd->linelen);
-    gtscene->setBackgroundBrush(QImage((unsigned char* )streamThd->sliceGT,streamThd->slicelen,streamThd->linelen,QImage::Format_RGBA8888));
-    gtview->setFixedSize(refscene->width()+2,refscene->height()+2);
-    */
+    featview->setFixedSize(featscene->width()+2,featscene->height()+2);
+
     scrollwidget->setFixedHeight(layout1->minimumSize().height());
     int minh=std::min(scrollwidget->height()+13,deskrect.height()-200);
     int minw=std::min(scrollwidget->width()+13,deskrect.width()*2-100);
@@ -250,7 +260,11 @@ void MainWindow::resume()
     {
         if(trkscene->lineDone>=2)
         {
-            refscene->clear();
+            std::cout<<"ressume"<<std::endl;
+            if(refscene!=NULL)
+                refscene->clear();
+            if(featscene!=NULL)
+                featscene->clear();
             streamThd->setUpLine(trkscene->lineDots[0].coord[0],
                     trkscene->lineDots[0].coord[1],
                     trkscene->lineDots[1].coord[0],

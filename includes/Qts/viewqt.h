@@ -59,6 +59,7 @@ public:
     std::vector<DragDots *> dotvec;
     std::vector<DragBBox *> dragbbvec;
     std::vector<BBox *> bbvec;
+    QPointF posDir[3],negDir[3];
     QBrush bgBrush;
     QBrush fgBrush;
     QFont txtfont;
@@ -77,6 +78,7 @@ public:
     void updateFptr(unsigned char * fptr,int fidx);
     void clear();
 public slots:
+    void updateDirPts();
     void dragBBclicked(int pid);
     void startEdit();
     void setUpbb();
@@ -111,6 +113,21 @@ class RefScene :public QGraphicsScene
     virtual void mouseMoveEvent(QGraphicsSceneMouseEvent* event) Q_DECL_OVERRIDE;
     void clear();
 };
-
+class FeatScene :public QGraphicsScene
+{
+    Q_OBJECT
+ public:
+    FeatScene(const QRectF & sceneRect, QObject * parent = 0);
+    FeatScene(qreal x, qreal y, qreal width, qreal height, QObject * parent = 0);
+    StreamThread* streamThd;
+    TrkScene* trkscene;
+    int frameidx;
+    QBrush bgBrush;
+    QFont txtfont;
+    void init();
+    void updateFptr(unsigned char * fptr,int fidx);
+    virtual void drawBackground(QPainter * painter, const QRectF & rect) Q_DECL_OVERRIDE;
+    void clear();
+};
 #endif // VIEWQT
 

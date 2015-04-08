@@ -49,7 +49,19 @@ SOURCES       = ..\src\Qts\main.cpp \
 		..\src\Qts\viewqt.cpp \
 		..\src\trackers\buffers.cpp \
 		..\src\Qts\modelsqt.cpp \
-		..\src\trackers\utils.cpp release\qrc_resources.cpp \
+		..\src\trackers\utils.cpp \
+		..\src\trackers\klt_c\convolve.cpp \
+		..\src\trackers\klt_c\error.cpp \
+		..\src\trackers\klt_c\klt.cpp \
+		..\src\trackers\klt_c\klt_util.cpp \
+		..\src\trackers\klt_c\pnmio.cpp \
+		..\src\trackers\klt_c\pyramid.cpp \
+		..\src\trackers\klt_c\selectGoodFeatures.cpp \
+		..\src\trackers\klt_c\storeFeatures.cpp \
+		..\src\trackers\klt_c\trackFeatures.cpp \
+		..\src\trackers\klt_c\trk.cpp \
+		..\src\trackers\klt_c\writeFeatures.cpp \
+		..\src\trackers\klttracker.cpp release\qrc_resources.cpp \
 		release\moc_mainwindow.cpp \
 		release\moc_streamthread.cpp \
 		release\moc_viewqt.cpp
@@ -60,6 +72,18 @@ OBJECTS       = release\main.obj \
 		release\buffers.obj \
 		release\modelsqt.obj \
 		release\utils.obj \
+		release\convolve.obj \
+		release\error.obj \
+		release\klt.obj \
+		release\klt_util.obj \
+		release\pnmio.obj \
+		release\pyramid.obj \
+		release\selectGoodFeatures.obj \
+		release\storeFeatures.obj \
+		release\trackFeatures.obj \
+		release\trk.obj \
+		release\writeFeatures.obj \
+		release\klttracker.obj \
 		release\qrc_resources.obj \
 		release\moc_mainwindow.obj \
 		release\moc_streamthread.obj \
@@ -70,13 +94,37 @@ DIST          =  ..\includes\Qts\mainwindow.h \
 		..\includes\Qts\viewqt.h \
 		..\includes\trackers\buffers.h \
 		..\includes\Qts\modelsqt.h \
-		..\includes\trackers\utils.h ..\src\Qts\main.cpp \
+		..\includes\trackers\utils.h \
+		..\includes\trackers\klt_c\base.h \
+		..\includes\trackers\klt_c\convolve.h \
+		..\includes\trackers\klt_c\error.h \
+		..\includes\trackers\klt_c\klt.h \
+		..\includes\trackers\klt_c\klt_util.h \
+		..\includes\trackers\klt_c\pnmio.h \
+		..\includes\trackers\klt_c\pyramid.h \
+		..\includes\trackers\klt_c\stdafx.h \
+		..\includes\trackers\klt_c\targetver.h \
+		..\includes\trackers\klt_c\trk.h \
+		..\includes\trackers\tracker.h \
+		..\includes\trackers\klttracker.h ..\src\Qts\main.cpp \
 		..\src\Qts\mainwindow.cpp \
 		..\src\Qts\streamthread.cpp \
 		..\src\Qts\viewqt.cpp \
 		..\src\trackers\buffers.cpp \
 		..\src\Qts\modelsqt.cpp \
-		..\src\trackers\utils.cpp
+		..\src\trackers\utils.cpp \
+		..\src\trackers\klt_c\convolve.cpp \
+		..\src\trackers\klt_c\error.cpp \
+		..\src\trackers\klt_c\klt.cpp \
+		..\src\trackers\klt_c\klt_util.cpp \
+		..\src\trackers\klt_c\pnmio.cpp \
+		..\src\trackers\klt_c\pyramid.cpp \
+		..\src\trackers\klt_c\selectGoodFeatures.cpp \
+		..\src\trackers\klt_c\storeFeatures.cpp \
+		..\src\trackers\klt_c\trackFeatures.cpp \
+		..\src\trackers\klt_c\trk.cpp \
+		..\src\trackers\klt_c\writeFeatures.cpp \
+		..\src\trackers\klttracker.cpp
 QMAKE_TARGET  = TrkViewer
 DESTDIR        = release\ #avoid trailing-slash linebreak
 TARGET         = TrkViewer.exe
@@ -85,6 +133,26 @@ DESTDIR_TARGET = release\TrkViewer.exe
 ####### Implicit rules
 
 .SUFFIXES: .c .cpp .cc .cxx
+
+{..\src\trackers\klt_c}.cpp{release\}.obj::
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -Forelease\ @<<
+	$<
+<<
+
+{..\src\trackers\klt_c}.cc{release\}.obj::
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -Forelease\ @<<
+	$<
+<<
+
+{..\src\trackers\klt_c}.cxx{release\}.obj::
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -Forelease\ @<<
+	$<
+<<
+
+{..\src\trackers\klt_c}.c{release\}.obj::
+	$(CC) -c $(CFLAGS) $(INCPATH) -Forelease\ @<<
+	$<
+<<
 
 {release}.cpp{release\}.obj::
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -Forelease\ @<<
@@ -185,7 +253,7 @@ dist:
 	$(ZIP) TrkViewer.zip $(SOURCES) $(DIST) ..\viewer.pro C:\Qt\5.4\msvc2013_opengl\mkspecs\features\spec_pre.prf C:\Qt\5.4\msvc2013_opengl\mkspecs\common\shell-win32.conf C:\Qt\5.4\msvc2013_opengl\mkspecs\qconfig.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_axbase.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_axbase_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_axcontainer.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_axcontainer_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_axserver.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_axserver_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_bluetooth.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_bluetooth_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_bootstrap_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_clucene_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_concurrent.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_concurrent_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_core.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_core_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_declarative.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_declarative_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_designer.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_designer_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_designercomponents_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_enginio.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_enginio_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_gui.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_gui_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_help.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_help_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_location.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_location_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_multimedia.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_multimedia_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_multimediawidgets.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_multimediawidgets_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_network.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_network_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_nfc.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_nfc_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_opengl.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_opengl_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_openglextensions.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_openglextensions_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_platformsupport_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_positioning.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_positioning_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_printsupport.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_printsupport_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_qml.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_qml_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_qmldevtools_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_qmltest.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_qmltest_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_qtmultimediaquicktools_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_quick.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_quick_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_quickparticles_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_quickwidgets.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_quickwidgets_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_script.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_script_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_scripttools.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_scripttools_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_sensors.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_sensors_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_serialport.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_serialport_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_sql.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_sql_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_svg.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_svg_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_testlib.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_testlib_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_uitools.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_uitools_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_webchannel.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_webchannel_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_webengine.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_webengine_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_webenginecore.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_webenginecore_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_webenginewidgets.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_webenginewidgets_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_webkit.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_webkit_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_webkitwidgets.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_webkitwidgets_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_websockets.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_websockets_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_webview.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_webview_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_widgets.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_widgets_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_winextras.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_winextras_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_xml.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_xml_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_xmlpatterns.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\modules\qt_lib_xmlpatterns_private.pri C:\Qt\5.4\msvc2013_opengl\mkspecs\features\qt_functions.prf C:\Qt\5.4\msvc2013_opengl\mkspecs\features\qt_config.prf C:\Qt\5.4\msvc2013_opengl\mkspecs\features\win32\qt_config.prf C:\Qt\5.4\msvc2013_opengl\mkspecs\win32-msvc2013\qmake.conf C:\Qt\5.4\msvc2013_opengl\mkspecs\features\spec_post.prf C:\Qt\5.4\msvc2013_opengl\mkspecs\features\exclusive_builds.prf C:\Qt\5.4\msvc2013_opengl\mkspecs\features\default_pre.prf C:\Qt\5.4\msvc2013_opengl\mkspecs\features\win32\default_pre.prf C:\Qt\5.4\msvc2013_opengl\mkspecs\features\resolve_config.prf C:\Qt\5.4\msvc2013_opengl\mkspecs\features\exclusive_builds_post.prf C:\Qt\5.4\msvc2013_opengl\mkspecs\features\default_post.prf C:\Qt\5.4\msvc2013_opengl\mkspecs\features\build_pass.prf C:\Qt\5.4\msvc2013_opengl\mkspecs\features\win32\rtti.prf C:\Qt\5.4\msvc2013_opengl\mkspecs\features\precompile_header.prf C:\Qt\5.4\msvc2013_opengl\mkspecs\features\warn_on.prf C:\Qt\5.4\msvc2013_opengl\mkspecs\features\qt.prf C:\Qt\5.4\msvc2013_opengl\mkspecs\features\resources.prf C:\Qt\5.4\msvc2013_opengl\mkspecs\features\moc.prf C:\Qt\5.4\msvc2013_opengl\mkspecs\features\win32\opengl.prf C:\Qt\5.4\msvc2013_opengl\mkspecs\features\uic.prf C:\Qt\5.4\msvc2013_opengl\mkspecs\features\win32\windows.prf C:\Qt\5.4\msvc2013_opengl\mkspecs\features\testcase_targets.prf C:\Qt\5.4\msvc2013_opengl\mkspecs\features\exceptions.prf C:\Qt\5.4\msvc2013_opengl\mkspecs\features\yacc.prf C:\Qt\5.4\msvc2013_opengl\mkspecs\features\lex.prf ..\viewer.pro ..\resources.qrc C:/Qt/5.4/msvc2013_opengl/lib/qtmain.prl C:/Qt/5.4/msvc2013_opengl/lib/Qt5Core.prl C:/Qt/5.4/msvc2013_opengl/lib/Qt5Widgets.prl C:/Qt/5.4/msvc2013_opengl/lib/Qt5Gui.prl  NO_PCH_SOURCES RESOURCES HEADERS SOURCES OBJECTIVE_SOURCES FORMS YACCSOURCES YACCSOURCES LEXSOURCES 
 
 clean: compiler_clean 
-	-$(DEL_FILE) release\main.obj release\mainwindow.obj release\streamthread.obj release\viewqt.obj release\buffers.obj release\modelsqt.obj release\utils.obj release\qrc_resources.obj release\moc_mainwindow.obj release\moc_streamthread.obj release\moc_viewqt.obj
+	-$(DEL_FILE) release\main.obj release\mainwindow.obj release\streamthread.obj release\viewqt.obj release\buffers.obj release\modelsqt.obj release\utils.obj release\convolve.obj release\error.obj release\klt.obj release\klt_util.obj release\pnmio.obj release\pyramid.obj release\selectGoodFeatures.obj release\storeFeatures.obj release\trackFeatures.obj release\trk.obj release\writeFeatures.obj release\klttracker.obj release\qrc_resources.obj release\moc_mainwindow.obj release\moc_streamthread.obj release\moc_viewqt.obj
 	-$(DEL_FILE) release\TrkViewer.exp
 
 distclean: clean 
@@ -1609,6 +1677,96 @@ release\modelsqt.obj: ..\src\Qts\modelsqt.cpp ..\includes\Qts\modelsqt.h \
 		C:\Qt\5.4\msvc2013_opengl\include\QtWidgets\qgraphicslayoutitem.h
 
 release\utils.obj: ..\src\trackers\utils.cpp ..\includes\trackers\utils.h
+
+release\convolve.obj: ..\src\trackers\klt_c\convolve.cpp ..\includes\trackers\klt_c\base.h \
+		..\includes\trackers\klt_c\error.h \
+		..\includes\trackers\klt_c\convolve.h \
+		..\includes\trackers\klt_c\klt.h \
+		..\includes\trackers\klt_c\klt_util.h
+
+release\error.obj: ..\src\trackers\klt_c\error.cpp 
+
+release\klt.obj: ..\src\trackers\klt_c\klt.cpp ..\includes\trackers\klt_c\base.h \
+		..\includes\trackers\klt_c\convolve.h \
+		..\includes\trackers\klt_c\klt.h \
+		..\includes\trackers\klt_c\klt_util.h \
+		..\includes\trackers\klt_c\error.h \
+		..\includes\trackers\klt_c\pyramid.h
+
+release\klt_util.obj: ..\src\trackers\klt_c\klt_util.cpp ..\includes\trackers\klt_c\base.h \
+		..\includes\trackers\klt_c\error.h \
+		..\includes\trackers\klt_c\pnmio.h \
+		..\includes\trackers\klt_c\klt.h \
+		..\includes\trackers\klt_c\klt_util.h
+
+release\pnmio.obj: ..\src\trackers\klt_c\pnmio.cpp ..\includes\trackers\klt_c\error.h
+
+release\pyramid.obj: ..\src\trackers\klt_c\pyramid.cpp ..\includes\trackers\klt_c\base.h \
+		..\includes\trackers\klt_c\error.h \
+		..\includes\trackers\klt_c\convolve.h \
+		..\includes\trackers\klt_c\klt.h \
+		..\includes\trackers\klt_c\klt_util.h \
+		..\includes\trackers\klt_c\pyramid.h
+
+release\selectGoodFeatures.obj: ..\src\trackers\klt_c\selectGoodFeatures.cpp ..\includes\trackers\klt_c\base.h \
+		..\includes\trackers\klt_c\error.h \
+		..\includes\trackers\klt_c\convolve.h \
+		..\includes\trackers\klt_c\klt.h \
+		..\includes\trackers\klt_c\klt_util.h \
+		..\includes\trackers\klt_c\pyramid.h
+
+release\storeFeatures.obj: ..\src\trackers\klt_c\storeFeatures.cpp ..\includes\trackers\klt_c\error.h \
+		..\includes\trackers\klt_c\klt.h \
+		..\includes\trackers\klt_c\klt_util.h
+
+release\trackFeatures.obj: ..\src\trackers\klt_c\trackFeatures.cpp ..\includes\trackers\klt_c\base.h \
+		..\includes\trackers\klt_c\error.h \
+		..\includes\trackers\klt_c\convolve.h \
+		..\includes\trackers\klt_c\klt.h \
+		..\includes\trackers\klt_c\klt_util.h \
+		..\includes\trackers\klt_c\pyramid.h
+
+release\trk.obj: ..\src\trackers\klt_c\trk.cpp ..\includes\trackers\klt_c\trk.h
+
+release\writeFeatures.obj: ..\src\trackers\klt_c\writeFeatures.cpp ..\includes\trackers\klt_c\base.h \
+		..\includes\trackers\klt_c\error.h \
+		..\includes\trackers\klt_c\pnmio.h \
+		..\includes\trackers\klt_c\klt.h \
+		..\includes\trackers\klt_c\klt_util.h
+
+release\klttracker.obj: ..\src\trackers\klttracker.cpp ..\includes\trackers\klttracker.h \
+		..\includes\trackers\tracker.h \
+		..\includes\trackers\utils.h \
+		..\includes\trackers\buffers.h \
+		..\includes\trackers\klt_c\klt.h \
+		..\includes\trackers\klt_c\klt_util.h \
+		C:\opencv\build\include\opencv2\opencv.hpp \
+		C:\opencv\build\include\opencv2\core\core_c.h \
+		C:\opencv\build\include\opencv2\core\types_c.h \
+		C:\opencv\build\include\opencv2\core\core.hpp \
+		C:\opencv\build\include\opencv2\core\version.hpp \
+		C:\opencv\build\include\opencv2\core\operations.hpp \
+		C:\opencv\build\include\opencv2\core\mat.hpp \
+		C:\opencv\build\include\opencv2\flann\miniflann.hpp \
+		C:\opencv\build\include\opencv2\flann\defines.h \
+		C:\opencv\build\include\opencv2\flann\config.h \
+		C:\opencv\build\include\opencv2\imgproc\imgproc_c.h \
+		C:\opencv\build\include\opencv2\imgproc\types_c.h \
+		C:\opencv\build\include\opencv2\imgproc\imgproc.hpp \
+		C:\opencv\build\include\opencv2\photo\photo.hpp \
+		C:\opencv\build\include\opencv2\photo\photo_c.h \
+		C:\opencv\build\include\opencv2\video\video.hpp \
+		C:\opencv\build\include\opencv2\video\tracking.hpp \
+		C:\opencv\build\include\opencv2\video\background_segm.hpp \
+		C:\opencv\build\include\opencv2\features2d\features2d.hpp \
+		C:\opencv\build\include\opencv2\objdetect\objdetect.hpp \
+		C:\opencv\build\include\opencv2\calib3d\calib3d.hpp \
+		C:\opencv\build\include\opencv2\ml\ml.hpp \
+		C:\opencv\build\include\opencv2\highgui\highgui_c.h \
+		C:\opencv\build\include\opencv2\highgui\highgui.hpp \
+		C:\opencv\build\include\opencv2\contrib\contrib.hpp \
+		C:\opencv\build\include\opencv2\contrib\retina.hpp \
+		C:\opencv\build\include\opencv2\contrib\openfabmap.hpp
 
 release\qrc_resources.obj: release\qrc_resources.cpp 
 

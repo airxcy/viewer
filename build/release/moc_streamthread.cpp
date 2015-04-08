@@ -19,8 +19,8 @@
 
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_StreamThread_t {
-    QByteArrayData data[35];
-    char stringdata[287];
+    QByteArrayData data[36];
+    char stringdata[301];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -63,7 +63,8 @@ QT_MOC_LITERAL(30, 243, 2), // "xb"
 QT_MOC_LITERAL(31, 246, 2), // "yb"
 QT_MOC_LITERAL(32, 249, 9), // "setUpPers"
 QT_MOC_LITERAL(33, 259, 11), // "updateSlice"
-QT_MOC_LITERAL(34, 271, 15) // "updateSliceLean"
+QT_MOC_LITERAL(34, 271, 15), // "updateSliceLean"
+QT_MOC_LITERAL(35, 287, 13) // "checkKLTSlice"
 
     },
     "StreamThread\0aFrameDone\0\0debug\0"
@@ -73,7 +74,8 @@ QT_MOC_LITERAL(34, 271, 15) // "updateSliceLean"
     "std::string&\0filename\0init\0updateRefscene\0"
     "parsefname\0parsegt\0setPos\0stepPos\0"
     "getroi\0checkroi\0setUpLine\0xa\0ya\0xb\0"
-    "yb\0setUpPers\0updateSlice\0updateSliceLean"
+    "yb\0setUpPers\0updateSlice\0updateSliceLean\0"
+    "checkKLTSlice"
 };
 #undef QT_MOC_LITERAL
 
@@ -83,7 +85,7 @@ static const uint qt_meta_data_StreamThread[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-      21,   14, // methods
+      22,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -91,29 +93,30 @@ static const uint qt_meta_data_StreamThread[] = {
        8,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    0,  119,    2, 0x06 /* Public */,
-       3,    1,  120,    2, 0x06 /* Public */,
-       6,    0,  123,    2, 0x06 /* Public */,
-       7,    2,  124,    2, 0x06 /* Public */,
-      10,    0,  129,    2, 0x06 /* Public */,
-      11,    0,  130,    2, 0x06 /* Public */,
-      12,    1,  131,    2, 0x06 /* Public */,
-      14,    1,  134,    2, 0x06 /* Public */,
+       1,    0,  124,    2, 0x06 /* Public */,
+       3,    1,  125,    2, 0x06 /* Public */,
+       6,    0,  128,    2, 0x06 /* Public */,
+       7,    2,  129,    2, 0x06 /* Public */,
+      10,    0,  134,    2, 0x06 /* Public */,
+      11,    0,  135,    2, 0x06 /* Public */,
+      12,    1,  136,    2, 0x06 /* Public */,
+      14,    1,  139,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-      15,    0,  137,    2, 0x0a /* Public */,
-      16,    1,  138,    2, 0x0a /* Public */,
-      19,    0,  141,    2, 0x0a /* Public */,
-      20,    0,  142,    2, 0x0a /* Public */,
-      21,    0,  143,    2, 0x0a /* Public */,
-      22,    0,  144,    2, 0x0a /* Public */,
-      23,    1,  145,    2, 0x0a /* Public */,
-      25,    0,  148,    2, 0x0a /* Public */,
-      26,    2,  149,    2, 0x0a /* Public */,
-      27,    4,  154,    2, 0x0a /* Public */,
-      32,    0,  163,    2, 0x0a /* Public */,
-      33,    0,  164,    2, 0x0a /* Public */,
-      34,    0,  165,    2, 0x0a /* Public */,
+      15,    0,  142,    2, 0x0a /* Public */,
+      16,    1,  143,    2, 0x0a /* Public */,
+      19,    0,  146,    2, 0x0a /* Public */,
+      20,    0,  147,    2, 0x0a /* Public */,
+      21,    0,  148,    2, 0x0a /* Public */,
+      22,    0,  149,    2, 0x0a /* Public */,
+      23,    1,  150,    2, 0x0a /* Public */,
+      25,    0,  153,    2, 0x0a /* Public */,
+      26,    2,  154,    2, 0x0a /* Public */,
+      27,    4,  159,    2, 0x0a /* Public */,
+      32,    0,  168,    2, 0x0a /* Public */,
+      33,    0,  169,    2, 0x0a /* Public */,
+      34,    0,  170,    2, 0x0a /* Public */,
+      35,    0,  171,    2, 0x0a /* Public */,
 
  // signals: parameters
     QMetaType::Void,
@@ -136,6 +139,7 @@ static const uint qt_meta_data_StreamThread[] = {
     QMetaType::Void,
     QMetaType::Double, QMetaType::Int, QMetaType::Int,    8,    9,
     QMetaType::Void, QMetaType::Int, QMetaType::Int, QMetaType::Int, QMetaType::Int,   28,   29,   30,   31,
+    QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
@@ -171,6 +175,7 @@ void StreamThread::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id
         case 18: _t->setUpPers(); break;
         case 19: _t->updateSlice(); break;
         case 20: _t->updateSliceLean(); break;
+        case 21: _t->checkKLTSlice(); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -252,13 +257,13 @@ int StreamThread::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 21)
+        if (_id < 22)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 21;
+        _id -= 22;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 21)
+        if (_id < 22)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 21;
+        _id -= 22;
     }
     return _id;
 }

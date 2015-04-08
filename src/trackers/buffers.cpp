@@ -162,13 +162,24 @@ bool FrameBuff::init(int bsize,int w, int h,int l)
 }
 
 template class Buff < TrkPts >;
-
+template class Buff < FeatPts >;
 void TrackBuff::clone(TrackBuff* target)
 {
     Buff::clone(target);
     target->isCurved=isCurved;
 }
 void TrackBuff::clear()
+{
+    isCurved=false;
+    Buff::clear();
+}
+
+void FeatBuff::clone(FeatBuff* target)
+{
+    Buff::clone(target);
+    target->isCurved=isCurved;
+}
+void FeatBuff::clear()
 {
     isCurved=false;
     Buff::clear();

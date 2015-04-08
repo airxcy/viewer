@@ -8,8 +8,9 @@
 //#include <stdlib.h>
 
 //#include <direct.h>
-
+#include "Qts/mainwindow.h"
 #include <opencv2/opencv.hpp>
+
 #include <QMessageBox>
 #include <QDir>
 #include <QFile>
@@ -23,6 +24,7 @@ Mat frame;
 float fps=0;
 char strbuff[100];
 QDir qdirtmp;
+Mat gray;
 StreamThread::StreamThread(QObject *parent) : QThread(parent)
 {
     restart = false;
@@ -38,7 +40,11 @@ StreamThread::StreamThread(QObject *parent) : QThread(parent)
     nextframeidx=0;
     sliceptr=NULL;
     crossLog=NULL;
+    prodlog=NULL;
+    sliceGT=NULL;
+    sliceBB=NULL;
     persDone=false;
+    kltInited=false;
 }
 StreamThread::~StreamThread()
 {
@@ -80,12 +86,14 @@ bool StreamThread::init()
     parsegt();
 
     cap>>frame;
+
     delay=25;
     bufflen=delay+10;
-    maxskeyframe=maxframe/delay;
+    maxskeyframe=maxframe;//delay;
     cvtColor(frame,frame,CV_BGR2RGB);
-
     framewidth=frame.size[1],frameheight=frame.size[0];
+    cvtColor(frame,gray,CV_BGR2GRAY);
+
     if(framebuff==NULL)
     {
         framebuff = new FrameBuff();
@@ -97,12 +105,18 @@ bool StreamThread::init()
     frameByteSize=frame.size[0]*frame.size[1]*frame.elemSize();
     framebuff->updateAFrame(frame.data);
     frameptr=framebuff->cur_frame_ptr;
+
     delayedFrameptr=framebuff->headptr;
     inited=true;
     firsttime=false;
+    tracker = new KLTtracker();
+    tracker->init(10,framewidth,frameheight);
+    tracker->selfinit(gray.data);
+    prodvec.reserve(tracker->nFeatures);
+    featlog.assign(tracker->nFeatures,0);
+    kltInited=true;
     //if(!lineDone)
         //setUpLine(framewidth/2,0,framewidth/2,frameheight);
-std::cout<<"init done"<<std::endl;
     return cap.isOpened();
 }
 void StreamThread::updateItems()
@@ -113,15 +127,12 @@ void StreamThread::updateItems()
 }
 void StreamThread::parsefname()
 {
-    char drive[100],dir[100],fname[100],ext[100];
-    _splitpath(vidfname.data(),drive,dir,fname,ext);
-    baseDirname=drive;
-    baseDirname=baseDirname+dir;
-    vidid=fname;
-    ext[0]='_';
-    vidid=vidid+ext;
-    gtdir=baseDirname+vidid+"/";
-    qdirstr=baseDirname+vidid+"/";
+    QFileInfo qvidfileinfo(vidfname.data());
+    baseDirname=qvidfileinfo.path();
+    vidid=qvidfileinfo.baseName();
+    vidid=vidid+"_"+qvidfileinfo.completeSuffix();
+    gtdir=baseDirname+"/"+vidid+"/";
+    qdirstr=baseDirname+"/"+vidid+"/";
 }
 void StreamThread::getroi()
 {
@@ -214,8 +225,6 @@ void StreamThread::updateRefscene()
     delayedFrameptr=frameptr;
     if(bb_N>0)
     {
-        int count;
-        avgpd=0;
         for(int bb_i=0;bb_i<bb_N;bb_i++)
         {
             TrackBuff* bbtrkptr = trackBuff[bb_i];
@@ -284,12 +293,10 @@ void StreamThread::updateRefscene()
                             crossLog[bb_i*5]=1;
                             prodlog[bb_i*5]=pdsign;
                             ddot->lit();
-                            int pos=lproduct+0.5;//normline*linelen+0.5;
+                            int pos=lproduct+0.5;
                             if(pos>=0&&pos<linelen)
                                 sliceGT[pos*slicelen+updatepos]=-pdsign*(bb_i+1);
                         }
-                        //if(bb_i==56)
-                        {
                         double product[4];
                                 product[0]=cproduct-wd*xn+td*yn,
                                 product[1]=cproduct-wd*xn+bd*yn,
@@ -300,7 +307,6 @@ void StreamThread::updateRefscene()
                                 projection[1]=lproduct-wd*xline+bd*yline,
                                 projection[2]=lproduct+wd*xline+bd*yline,
                                 projection[3]=lproduct+wd*xline+td*yline;
-                        //std::cout<<linelen<<":";
                         for(int i=0;i<4;i++)
                         {
                             int start=i,end=(i+1)%4;
@@ -309,18 +315,68 @@ void StreamThread::updateRefscene()
                                 double pro=(projection[start]*product[end]-product[start]*projection[end])
                                         /(product[end]-product[start]);
                                 int pos=pro+0.5;
-                                //if(i==0)
-                                    //std::cout<<pro<<":"<<product[start]<<","<<product[end]<<","<<projection[start]<<","<<projection[end]<<std::endl;
                                 if(pos>=0&&pos<linelen)
                                     sliceBB[pos*slicelen+updatepos]=(crossLog[bb_i*5]*2-1)*prodlog[bb_i*5]*(bb_i+1);
                             }
-                        }
-                        //std::cout<<std::endl;
                         }
                     }
                 }
             }
         }
+    }
+}
+void StreamThread::checkKLTSlice()
+{
+    if(kltInited&&lineDone)
+    {
+        std::vector<FeatBuff>& featvec=tracker->trackBuff;
+        prodvec.clear();
+        for(int i=0;i<tracker->nFeatures;i++)
+        {
+
+            FeatBuff& feattrk = featvec[i];
+            if(feattrk.len>0)
+            {
+
+                double x1=feattrk.cur_frame_ptr->x,y1=feattrk.cur_frame_ptr->y;
+                double vx1=x1-pointA[0],vy1=y1-pointA[1];//vx0=x0-pointA[0],vy0=y0-pointA[1],;
+                double norm1=sqrt(vx1*vx1+vy1*vy1);//norm0=sqrt(vx0*vx0+vy0*vy0),;
+                //double cproduct0 = (vx0*xn+vy0*yn);
+                double cproduct1 = (vx1*xn+vy1*yn);
+                int prodsign=sgn(cproduct1);
+                //double cproduct = cproduct0*cproduct1/norm0/norm1;
+                prodvec.push_back(cproduct1);
+                if(feattrk.len==1||featlog[i]==0)
+                {
+                    featlog[i]=prodsign;
+                }
+                if(feattrk.len>5&&prodsign*featlog[i]<=0)
+                {
+
+                    if(prodsign<=0)
+                    featlog[i]=-1;
+                    else
+                    featlog[i]=1;
+                    int updatepos=slicetail;
+                    if(slicetail<slicelen)
+                        updatepos=slicetail;
+                    else
+                        updatepos=slicelen-1;
+                    double lproduct = xline*vx1+yline*vy1;
+                    int pos = lproduct+0.5;
+                    if(pos>=0&&pos<linelen)
+                    {
+                        double x0=feattrk.getPtr(feattrk.len-2)->x,y0=feattrk.getPtr(feattrk.len-2)->y;
+                        double x=x1-x0,y=y1-y0;
+                        double dirx = x*xn+y*yn,diry= x*xline+y*yline;
+                        sliceKLT(pos,updatepos,0)=dirx;
+                        sliceKLT(pos,updatepos,1)=diry;
+                        double kltlen=sqrt((x1-x0)*(x1-x0)+(y1-y0)*(y1-y0));
+                    }
+                }
+            }
+        }
+        std::sort(prodvec.begin(),prodvec.end());
     }
 }
 void StreamThread::setPos(int stepPos)
@@ -341,7 +397,7 @@ void StreamThread::setUpLine(int xa,int ya,int xb,int yb)
         tmp=xa;xa=xb;xb=tmp;
     }
     pointA[0]=xa,pointA[1]=ya,pointB[0]=xb,pointB[1]=yb;
-    slicelen=1000;
+    slicelen=500;
     x_idx.clear();
     y_idx.clear();
     xn=-(pointB[1]-pointA[1]),yn=pointB[0]-pointA[0],
@@ -380,13 +436,14 @@ void StreamThread::setUpLine(int xa,int ya,int xb,int yb)
             double  cproduct = (xn*x0+yn*y0)/norm0;
             prodlog[i*5]=sgn(cproduct);
         }
+        sliceKLT=Map3D<double>(linelen,slicelen,2);
+        memset(sliceKLT.data,0,linelen*slicelen*2*sizeof(double));
     }
 
-    //std::cout<<"here"<<std::endl;
-
-
-
     lineDone=true;
+    if(trkscene)
+        trkscene->updateDirPts();
+    checkKLTSlice();
     setUpPers();
 }
 void StreamThread::setUpPers()
@@ -416,22 +473,27 @@ void StreamThread::updateSlice()
     int* gtptr=sliceGT,*slbbptr=sliceBB;
     int step= slicelen*3,cpysize=(slicelen-1)*3;
     int updatepos=slicetail;
+    double* kltptr;
     if(slicetail==slicelen)
     {
         ptr=sliceptr;
         gtptr=sliceGT;
         slbbptr=sliceBB;
+        kltptr=sliceKLT.data;
         for(int i=0;i<linelen;i++)
         {
             memmove(ptr,ptr+3,cpysize);
             memmove(gtptr,gtptr+1,(slicelen-1)*sizeof(int));
             memmove(slbbptr,slbbptr+1,(slicelen-1)*sizeof(int));
+            memmove(kltptr,kltptr+2,(slicelen-1)*sizeof(double)*2);
             *(gtptr+slicelen-1)=0;
             *(slbbptr+slicelen-1)=0;
+            *(kltptr+slicelen*2-1)=0;
+            *(kltptr+slicelen*2-2)=0;
             ptr+=step;
             gtptr+=slicelen;
             slbbptr+=slicelen;
-
+            kltptr+=slicelen*2;
         }
         updatepos=slicelen-1;
     }
@@ -511,9 +573,7 @@ void StreamThread::streaming()
     {
         if(init())
         {
-            //std::cout<<"start"<<std::endl;
             emit initSig();
-            std::cout<<topa<<","<<bota<<","<<wa<<","<<wb<<std::endl;
             //frameidx=0;
             lastframeidx=frameidx;
             while(!frame.empty())
@@ -534,19 +594,25 @@ void StreamThread::streaming()
                 cap >> frame;
                 if(frame.empty())
                     break;
-
+                cvtColor(frame,gray,CV_BGR2GRAY);
                 cvtColor(frame,frame,CV_BGR2RGB);
+                if(kltInited)
+                {
+                    tracker->updateAframe(gray.data,frameidx);
+                }
                 framebuff->updateAFrame(frame.data);
                 frameptr=framebuff->cur_frame_ptr;
                 if(lineDone)
                 {
                     updateSlice();
-                    //Sstd::cout<<"slice"<<std::endl;
+
                 }
+                mwindow->slider->setValue(frameidx);
+                mwindow->label->setText(QString::number(frameidx)+"/"+QString::number(maxframe));
                 frameidx++;
-                //std::cout<<cap.get(CV_CAP_PROP_POS_FRAMES)<<","<<frameidx<<std::endl;
                 updateRefscene();
-                //std::cout<<"updateRefscene"<<std::endl;
+                if(kltInited)
+                    checkKLTSlice();
                 //msleep(10);
             }
         }

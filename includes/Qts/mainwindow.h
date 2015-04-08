@@ -17,7 +17,7 @@ class TrkScene;
 class GraphicsView;
 class RefScene;
 class DefaultScene;
-
+class FeatScene;
 //! [0]
 class MainWindow : public QMainWindow
 {
@@ -30,8 +30,8 @@ public:
     QWidget* cWidget;
     TrkScene* trkscene;
     RefScene* refscene;
-    GraphicsView* gview,*refview,* gtview;
-    QGraphicsScene* gtscene;
+    GraphicsView* gview,*refview,*featview;
+    FeatScene * featscene;
     DefaultScene* defaultscene;
     QGridLayout* layout,* layout1;
     QScrollArea* scrollarea;

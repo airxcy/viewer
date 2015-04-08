@@ -194,8 +194,8 @@ int GraphicsView::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     return _id;
 }
 struct qt_meta_stringdata_TrkScene_t {
-    QByteArrayData data[13];
-    char stringdata[86];
+    QByteArrayData data[14];
+    char stringdata[99];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -208,20 +208,21 @@ QT_MOC_LITERAL(0, 0, 8), // "TrkScene"
 QT_MOC_LITERAL(1, 9, 6), // "litDot"
 QT_MOC_LITERAL(2, 16, 0), // ""
 QT_MOC_LITERAL(3, 17, 4), // "bb_i"
-QT_MOC_LITERAL(4, 22, 13), // "dragBBclicked"
-QT_MOC_LITERAL(5, 36, 3), // "pid"
-QT_MOC_LITERAL(6, 40, 9), // "startEdit"
-QT_MOC_LITERAL(7, 50, 7), // "setUpbb"
-QT_MOC_LITERAL(8, 58, 7), // "addADot"
-QT_MOC_LITERAL(9, 66, 1), // "x"
-QT_MOC_LITERAL(10, 68, 1), // "y"
-QT_MOC_LITERAL(11, 70, 8), // "startTrk"
-QT_MOC_LITERAL(12, 79, 6) // "endTrk"
+QT_MOC_LITERAL(4, 22, 12), // "updateDirPts"
+QT_MOC_LITERAL(5, 35, 13), // "dragBBclicked"
+QT_MOC_LITERAL(6, 49, 3), // "pid"
+QT_MOC_LITERAL(7, 53, 9), // "startEdit"
+QT_MOC_LITERAL(8, 63, 7), // "setUpbb"
+QT_MOC_LITERAL(9, 71, 7), // "addADot"
+QT_MOC_LITERAL(10, 79, 1), // "x"
+QT_MOC_LITERAL(11, 81, 1), // "y"
+QT_MOC_LITERAL(12, 83, 8), // "startTrk"
+QT_MOC_LITERAL(13, 92, 6) // "endTrk"
 
     },
-    "TrkScene\0litDot\0\0bb_i\0dragBBclicked\0"
-    "pid\0startEdit\0setUpbb\0addADot\0x\0y\0"
-    "startTrk\0endTrk"
+    "TrkScene\0litDot\0\0bb_i\0updateDirPts\0"
+    "dragBBclicked\0pid\0startEdit\0setUpbb\0"
+    "addADot\0x\0y\0startTrk\0endTrk"
 };
 #undef QT_MOC_LITERAL
 
@@ -231,7 +232,7 @@ static const uint qt_meta_data_TrkScene[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-       7,   14, // methods
+       8,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -239,24 +240,26 @@ static const uint qt_meta_data_TrkScene[] = {
        1,       // signalCount
 
  // signals: name, argc, parameters, tag, flags
-       1,    1,   49,    2, 0x06 /* Public */,
+       1,    1,   54,    2, 0x06 /* Public */,
 
  // slots: name, argc, parameters, tag, flags
-       4,    1,   52,    2, 0x0a /* Public */,
-       6,    0,   55,    2, 0x0a /* Public */,
-       7,    0,   56,    2, 0x0a /* Public */,
-       8,    2,   57,    2, 0x0a /* Public */,
-      11,    1,   62,    2, 0x0a /* Public */,
-      12,    1,   65,    2, 0x0a /* Public */,
+       4,    0,   57,    2, 0x0a /* Public */,
+       5,    1,   58,    2, 0x0a /* Public */,
+       7,    0,   61,    2, 0x0a /* Public */,
+       8,    0,   62,    2, 0x0a /* Public */,
+       9,    2,   63,    2, 0x0a /* Public */,
+      12,    1,   68,    2, 0x0a /* Public */,
+      13,    1,   71,    2, 0x0a /* Public */,
 
  // signals: parameters
     QMetaType::Void, QMetaType::Int,    3,
 
  // slots: parameters
-    QMetaType::Void, QMetaType::Int,    5,
+    QMetaType::Void,
+    QMetaType::Void, QMetaType::Int,    6,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::Int, QMetaType::Int,    9,   10,
+    QMetaType::Void, QMetaType::Int, QMetaType::Int,   10,   11,
     QMetaType::Void, QMetaType::Int,    3,
     QMetaType::Void, QMetaType::Int,    3,
 
@@ -269,12 +272,13 @@ void TrkScene::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, vo
         TrkScene *_t = static_cast<TrkScene *>(_o);
         switch (_id) {
         case 0: _t->litDot((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 1: _t->dragBBclicked((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 2: _t->startEdit(); break;
-        case 3: _t->setUpbb(); break;
-        case 4: _t->addADot((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
-        case 5: _t->startTrk((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 6: _t->endTrk((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 1: _t->updateDirPts(); break;
+        case 2: _t->dragBBclicked((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 3: _t->startEdit(); break;
+        case 4: _t->setUpbb(); break;
+        case 5: _t->addADot((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< int(*)>(_a[2]))); break;
+        case 6: _t->startTrk((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 7: _t->endTrk((*reinterpret_cast< int(*)>(_a[1]))); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
@@ -314,13 +318,13 @@ int TrkScene::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 7)
+        if (_id < 8)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 7;
+        _id -= 8;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 7)
+        if (_id < 8)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 7;
+        _id -= 8;
     }
     return _id;
 }
@@ -393,6 +397,74 @@ void *RefScene::qt_metacast(const char *_clname)
 }
 
 int RefScene::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
+{
+    _id = QGraphicsScene::qt_metacall(_c, _id, _a);
+    if (_id < 0)
+        return _id;
+    return _id;
+}
+struct qt_meta_stringdata_FeatScene_t {
+    QByteArrayData data[1];
+    char stringdata[10];
+};
+#define QT_MOC_LITERAL(idx, ofs, len) \
+    Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
+    qptrdiff(offsetof(qt_meta_stringdata_FeatScene_t, stringdata) + ofs \
+        - idx * sizeof(QByteArrayData)) \
+    )
+static const qt_meta_stringdata_FeatScene_t qt_meta_stringdata_FeatScene = {
+    {
+QT_MOC_LITERAL(0, 0, 9) // "FeatScene"
+
+    },
+    "FeatScene"
+};
+#undef QT_MOC_LITERAL
+
+static const uint qt_meta_data_FeatScene[] = {
+
+ // content:
+       7,       // revision
+       0,       // classname
+       0,    0, // classinfo
+       0,    0, // methods
+       0,    0, // properties
+       0,    0, // enums/sets
+       0,    0, // constructors
+       0,       // flags
+       0,       // signalCount
+
+       0        // eod
+};
+
+void FeatScene::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
+{
+    Q_UNUSED(_o);
+    Q_UNUSED(_id);
+    Q_UNUSED(_c);
+    Q_UNUSED(_a);
+}
+
+const QMetaObject FeatScene::staticMetaObject = {
+    { &QGraphicsScene::staticMetaObject, qt_meta_stringdata_FeatScene.data,
+      qt_meta_data_FeatScene,  qt_static_metacall, Q_NULLPTR, Q_NULLPTR}
+};
+
+
+const QMetaObject *FeatScene::metaObject() const
+{
+    return QObject::d_ptr->metaObject ? QObject::d_ptr->dynamicMetaObject() : &staticMetaObject;
+}
+
+void *FeatScene::qt_metacast(const char *_clname)
+{
+    if (!_clname) return Q_NULLPTR;
+    if (!strcmp(_clname, qt_meta_stringdata_FeatScene.stringdata))
+        return static_cast<void*>(const_cast< FeatScene*>(this));
+    return QGraphicsScene::qt_metacast(_clname);
+}
+
+int FeatScene::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
     _id = QGraphicsScene::qt_metacall(_c, _id, _a);
     if (_id < 0)

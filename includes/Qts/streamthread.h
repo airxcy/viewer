@@ -2,6 +2,8 @@
 #define STREAMTHREAD
 
 #include "trackers/buffers.h"
+#include "trackers/klttracker.h"
+
 #include <QThread>
 #include <QMutex>
 #include <QWaitCondition>
@@ -11,6 +13,7 @@
 class BBox;
 class TrkScene;
 class RefScene;
+class MainWindow;
 class StreamThread : public QThread
 {
     Q_OBJECT
@@ -31,6 +34,7 @@ public:
 //    NoTracker* tracker;
     TrkScene* trkscene;
     RefScene* refscene;
+    MainWindow* mwindow;
     //tracking items
     int bb_N;
     std::vector<cv::Point2i> roi;
@@ -50,6 +54,10 @@ public:
     char* crossLog,* prodlog;
     int* sliceGT,* sliceBB;
     double topa,bota,wa,topb,botb,wb;
+    Map3D<double> sliceKLT;
+    KLTtracker* tracker;
+    std::vector<double> prodvec;
+    std::vector<int> featlog;
 public slots:
     void updateItems();
     void streamStart(std::string &filename);
@@ -64,6 +72,7 @@ public slots:
     void setUpPers();
     void updateSlice();
     void updateSliceLean();
+    void checkKLTSlice();
 signals:
     void aFrameDone();
     void debug(const char * msg);
@@ -77,7 +86,7 @@ signals:
 protected:
     void run();
 public:
-    bool restart,abort,pause,paused,inited,roidone,firsttime,lineDone,persDone;
+    bool restart,abort,pause,paused,inited,roidone,firsttime,lineDone,persDone,kltInited;
 };
 
 #endif // STREAMTHREAD
